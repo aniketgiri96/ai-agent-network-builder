@@ -33,15 +33,17 @@ class AgentEngine:
         for target_id in self.connections[sender_id]:
             target = self.agents[target_id]
 
-            completion = client.chat.completions.create(
-                model=target["model"],
-                messages=[
-                    {"role": "system", "content": target["role"]},
-                    {"role": "user", "content": message}
-                ]
-            )
-
-            reply = completion.choices[0].message["content"]
+            try:
+                completion = client.chat.completions.create(
+                    model=target["model"],
+                    messages=[
+                        {"role": "system", "content": target["role"]},
+                        {"role": "user", "content": message}
+                    ]
+                )
+                reply = completion.choices[0].message.content
+            except Exception as e:
+                reply = f"Error: {str(e)}"
 
             results.append({
                 "target": target_id,
